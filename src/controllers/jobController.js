@@ -12,6 +12,7 @@ class JobController {
             res.status(500).json({ message: `${e.message} - There was an error in the request.`});
         }
     };
+
    static async getOneJob(req, res) { 
          
         const jobID = req.params.id
@@ -24,6 +25,7 @@ class JobController {
             res.status(500).json({ message: `${e.message} - There was an error in the request.` });
         }
     };
+
     static async createJob(req, res) {
 
         const getJob = req.body;
@@ -47,6 +49,19 @@ class JobController {
             
         } catch (e) {
             res.status(500).json({ message: `${e.message} - An error occurred in our system to update a vacancy.` });
+        }
+    };
+    
+    static async deleteJob(req, res) {
+        
+        const jobID = req.params.id
+
+        try {
+            await job.findByIdAndDelete(jobID);
+            res.status(204)
+
+        } catch (error) {
+            res.status(500).json({ message: `${e.message} - An error occurred in our system to delete a vacancy.` })
         }
     };
 };
