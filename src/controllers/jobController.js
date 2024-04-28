@@ -12,7 +12,7 @@ class JobController {
             res.status(500).json({ message: `${e.message} - There was an error in the request.`});
         }
     };
-    async getOneJob(req, res) { 
+   static async getOneJob(req, res) { 
          
         const jobID = req.params.id
 
@@ -24,19 +24,18 @@ class JobController {
             res.status(500).json({ message: `${e.message} - There was an error in the request.` });
         }
     };
-    async createJob(req, res) {
+    static async createJob(req, res) {
 
         const getJob = req.body;
         
         try {
-            await job.create(getJob);
-            res.status(201).json({ message: `A new job vacancy has been created.`});
+           const newJob =  await job.create(getJob);
+            res.status(201).json({ message: `A new job vacancy has been created.`, job: newJob});
 
         } catch (e) {
             res.status(500).json({ message: `${e.message} - An error occurred in our system to register the vacancy.` });
         }
     };
-
 
 };
 
