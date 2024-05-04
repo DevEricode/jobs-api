@@ -79,6 +79,22 @@ class JobController {
 
     };
 
+    static async searchByCompany(req, res) {
+        
+        const company = req.query.company;
+
+        try {
+
+            const searchCompany = await job.find({ company: company });
+            res.status(200).json({ message: `Vacancies found successfully.`, jobs: searchCompany });
+
+        } catch (e) {
+            res.status(500).json({ message: `${e.message} - Search request failed!` })
+
+        }
+
+    };
+
 };
 
 export default JobController;
