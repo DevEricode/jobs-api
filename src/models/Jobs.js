@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const jobSchema = new mongoose.Schema({
     id: { type: mongoose.Schema.ObjectId },
-    name : { type: String },
-    description: { type: String },
+    name : { type: String, required: true },
+    description: { type: String , required: true},
     workModel: { type: String },
     workSchedule: { type: String },
     salary: {type: Number},
@@ -12,4 +12,4 @@ const jobSchema = new mongoose.Schema({
 
 const job = mongoose.model("Jobs", jobSchema);
 
-export default job
+export {job, jobSchema}
