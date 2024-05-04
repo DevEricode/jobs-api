@@ -58,10 +58,27 @@ class JobController {
             await job.findByIdAndDelete(jobID);
             res.status(204)
 
-        } catch (error) {
+        } catch (e) {
             res.status(500).json({ message: `${e.message} - An error occurred in our system to delete a vacancy.` })
         }
     };
+
+    static async searchByWorkModel(req, res) {
+        
+        const workModel = req.query.workModel;
+
+        try {
+
+            const searchWorkModel = await job.find({ workModel: workModel });
+            res.status(200).json({ message: `Vacancies found successfully.`, jobs: searchWorkModel });
+
+        } catch (e) {
+            res.status(500).json({ message: `${e.message} - Search request failed!` })
+
+        }
+
+    };
+
 };
 
 export default JobController;
