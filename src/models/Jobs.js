@@ -4,6 +4,7 @@ const jobSchema = new mongoose.Schema({
     id: { type: mongoose.Schema.ObjectId },
     name : { type: String, required: true },
     description: { type: String , required: true},
+    company: { type: String, required: true },
     workModel: { type: String },
     workSchedule: { type: String },
     salary: {type: Number},
