@@ -1,4 +1,4 @@
-import job from "../models/Jobs.js";
+import { job } from "../models/Jobs.js";
 
 
 class JobController {
@@ -27,11 +27,9 @@ class JobController {
     };
 
     static async createJob(req, res) {
-
-        const getJob = req.body;
         
         try {
-           const newJob =  await job.create(getJob);
+           const newJob =  await job.create(req.body);
             res.status(201).json({ message: `A new job vacancy has been created.`, job: newJob});
 
         } catch (e) {
