@@ -3,17 +3,17 @@ import { job } from "../models/Jobs.js";
 
 class JobController {
 
-    static async getAllJobs(req, res) {
+    static async getAllJobs(req, res, next) {
         try {
             const allJobs = await job.find({})
             res.status(200).json(allJobs);
 
         } catch (e) {
-            res.status(500).json({ message: `${e.message} - There was an error in the request.`});
+            next(e);
         }
     };
 
-   static async getOneJob(req, res) { 
+   static async getOneJob(req, res, next) { 
          
         const jobID = req.params.id
 
@@ -22,22 +22,22 @@ class JobController {
             res.status(200).json({message: "Job vacancy successfully found!", job: getOneJob});
 
         } catch (e) {
-            res.status(500).json({ message: `${e.message} - There was an error in the request.` });
+            next(e);
         }
     };
 
-    static async createJob(req, res) {
+    static async createJob(req, res, next) {
         
         try {
            const newJob =  await job.create(req.body);
             res.status(201).json({ message: `A new job vacancy has been created.`, job: newJob});
 
         } catch (e) {
-            res.status(500).json({ message: `${e.message} - An error occurred in our system to register the vacancy.` });
+            next(e);
         }
     };
 
-    static async updateJob(req, res) {
+    static async updateJob(req, res, next) {
 
         const jobId = req.params.id;
 
@@ -46,11 +46,11 @@ class JobController {
             res.status(200).json({ message: "Job vacancy updated successfully.",  job: updateJob});
             
         } catch (e) {
-            res.status(500).json({ message: `${e.message} - An error occurred in our system to update a vacancy.` });
+            next(e);
         }
     };
     
-    static async deleteJob(req, res) {
+    static async deleteJob(req, res, next) {
         
         const jobID = req.params.id
 
@@ -59,7 +59,7 @@ class JobController {
             res.status(204)
 
         } catch (e) {
-            res.status(500).json({ message: `${e.message} - An error occurred in our system to delete a vacancy.` })
+            next(e);
         }
     };
 
