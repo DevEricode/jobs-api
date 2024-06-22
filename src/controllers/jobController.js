@@ -1,11 +1,11 @@
-import { job } from "../models/Jobs.js";
+import { job as Job } from "../models/Jobs.js";
 
 
 class JobController {
 
     static async getAllJobs(req, res, next) {
         try {
-            const allJobs = await job.find({})
+            const allJobs = await Job.find({})
             res.status(200).json(allJobs);
 
         } catch (e) {
@@ -18,7 +18,7 @@ class JobController {
         const jobID = req.params.id
 
          try {
-            const getOneJob = await job.findById(jobID);
+            const getOneJob = await Job.findById(jobID);
             res.status(200).json({message: "Job vacancy successfully found!", job: getOneJob});
 
         } catch (e) {
@@ -29,7 +29,7 @@ class JobController {
     static async createJob(req, res, next) {
         
         try {
-           const newJob =  await job.create(req.body);
+           const newJob =  await Job.create(req.body);
             res.status(201).json({ message: `A new job vacancy has been created.`, job: newJob});
 
         } catch (e) {
@@ -42,7 +42,7 @@ class JobController {
         const jobId = req.params.id;
 
         try {
-            const updateJob = await job.findByIdAndUpdate(jobId, req.body);
+            const updateJob = await Job.findByIdAndUpdate(jobId, req.body);
             res.status(200).json({ message: "Job vacancy updated successfully.",  job: updateJob});
             
         } catch (e) {
@@ -55,7 +55,7 @@ class JobController {
         const jobID = req.params.id
 
         try {
-            await job.findByIdAndDelete(jobID);
+            await Job.findByIdAndDelete(jobID);
             res.status(204)
 
         } catch (e) {
@@ -63,38 +63,43 @@ class JobController {
         }
     };
 
-    static async searchByWorkModel(req, res) {
-        
-        const workModel = req.query.workModel;
-
+    static async searchByFilter(req, res, next) {
         try {
+            const search = await searchParameters(req.query);
 
-            const searchWorkModel = await job.find({ workModel: workModel });
-            res.status(200).json({ message: `Vacancies found successfully.`, jobs: searchWorkModel });
-
+            if (search !== null) {
+                req.result = Job.find(search);
+                next();
+            } else {
+                res.status(200).send([]);
+            }
         } catch (e) {
-            res.status(500).json({ message: `${e.message} - Search request failed!` })
-
+            
         }
-
     };
-
-    static async searchByCompany(req, res) {
-        
-        const company = req.query.company;
-
-        try {
-
-            const searchCompany = await job.find({ company: company });
-            res.status(200).json({ message: `Vacancies found successfully.`, jobs: searchCompany });
-
-        } catch (e) {
-            res.status(500).json({ message: `${e.message} - Search request failed!` })
-
-        }
-
-    };
-
 };
+
+async function searchParameters(parameters) {
+        
+    const { name, company, workModel, workSchedule, salaryMin, salaryMax, minPages, maxPages } = parameters;
+    let search = {};
+
+    if(name) search.name = { $regex: name, $options: "i" };
+    if(company) search.company = company;
+    if(workModel) search.workModel = workModel;
+    if(workSchedule) search.workSchedule = workSchedule;
+
+    if(salaryMin || salaryMax) search.salary = {};
+    if(salaryMin) search.salary.$gte = salaryMin
+    if(salaryMax) search.salary.$lte = salaryMax
+
+    if (minPages || maxPages) search.numPages = {};
+	if (minPages) search.numPages.$gte = minPages;
+	if (maxPages) search.numPages.$lte = maxPages;
+
+
+    return search;
+};
+
 
 export default JobController;
