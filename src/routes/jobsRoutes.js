@@ -4,7 +4,7 @@ import filtersPagination from "../middlewares/filtersPagination.js"
 
 const routes = express.Router();
 
-routes.get("/api/v1/jobs", JobController.getAllJobs);
+routes.get("/api/v1/jobs", JobController.getAllJobs, filtersPagination);
 routes.get("/api/v1/jobs/search", JobController.searchByFilter, filtersPagination);
 routes.get("/api/v1/jobs/:id", JobController.getOneJob);
 routes.post("/api/v1/jobs", JobController.createJob);
