@@ -1,29 +1,37 @@
 import { job as Job } from "../models/Jobs.js";
+import NotFound from "../error/NotFound.js";
 
 
 class JobController {
 
     static async getAllJobs(req, res, next) {
         try {
-            const allJobs = await Job.find({})
-            res.status(200).json(allJobs);
+            const allJobs = Job.find({})
+            req.result = allJobs;
+            next();
 
         } catch (e) {
             next(e);
-        }
+        };
     };
 
    static async getOneJob(req, res, next) { 
-         
-        const jobID = req.params.id
 
          try {
+            const jobID = req.params.id
+
             const getOneJob = await Job.findById(jobID);
-            res.status(200).json({message: "Job vacancy successfully found!", job: getOneJob});
+
+            if(getOneJob !== null) {
+                res.status(200).json({message: "Job vacancy successfully found!", job: getOneJob});
+            } else {
+                next(new NotFound("Vacancy not found!"));
+            };
+
 
         } catch (e) {
             next(e);
-        }
+        };
     };
 
     static async createJob(req, res, next) {
@@ -34,7 +42,7 @@ class JobController {
 
         } catch (e) {
             next(e);
-        }
+        };
     };
 
     static async updateJob(req, res, next) {
@@ -43,24 +51,34 @@ class JobController {
 
         try {
             const updateJob = await Job.findByIdAndUpdate(jobId, req.body);
-            res.status(200).json({ message: "Job vacancy updated successfully.",  job: updateJob});
+
+            if(updateJob !== null){
+                res.status(200).json({ message: "Job vacancy updated successfully.",  job: updateJob});
+            } else {
+                next(new NotFound("Vacancy not found!"));
+            };
             
         } catch (e) {
             next(e);
-        }
+        };
     };
     
     static async deleteJob(req, res, next) {
-        
-        const jobID = req.params.id
 
         try {
-            await Job.findByIdAndDelete(jobID);
-            res.status(204)
+            const jobID = req.params.id
+           const deleteVacancy = await Job.findByIdAndDelete(jobID);
+
+           if(deleteVacancy !== null) {
+                res.status(204)
+           } else {
+                next(new NotFound("Vacancy not found!"));
+           };
+
 
         } catch (e) {
             next(e);
-        }
+        };
     };
 
     static async searchByFilter(req, res, next) {
@@ -75,7 +93,7 @@ class JobController {
             }
         } catch (e) {
             
-        }
+        };
     };
 };
 
